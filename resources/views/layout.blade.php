@@ -4,11 +4,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1,0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>LaraLog</title>
+        <title>Laralog</title>
         @yield('styles')
         <link rel="stylesheet" href="/css/styles.css">
     </head>
-    <body>
+    <body style="background-color: #FFFFCC;">
         @include('nav')
         <main>
             <div class="container">
@@ -17,4 +17,7 @@
         </main>
         @yield('scripts')
     </body>
+    <footer>
+        <p style="text-align: center;">©︎umaroid</p>
+    </footer>
 </html>

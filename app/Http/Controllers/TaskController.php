@@ -18,13 +18,14 @@ class TaskController extends Controller
         // 選ばれたフォルダを取得する
         $current_folder = Folder::find($id);
         
+        // 値がリクエストに存在しており、かつ空でないことを判定したい場合は、filledメソッドを使います。
         if ($request->filled('keyword')) {
-            $keyword = $request->filled('keyword');
+            $keyword = $request->input('keyword');
             // タイトルに合致するタスクを取得
-            $tasks = Task::where('title', 'like', '%' . $keyword . '%')->get();
+            $tasks = Task::where('title', 'like', '%' . $keyword . '%')->where('folder_id', $id)->paginate(10);
         } else {
             // 選ばれたフォルダに紐づくタスクを取得する
-            $tasks = $current_folder->tasks()->get();    
+            $tasks = $current_folder->tasks()->paginate(10);
         }
         
         $date = date('Y/m/d');
