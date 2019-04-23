@@ -7,79 +7,108 @@ use App\Task;
 use App\Http\Requests\CreateTask;
 use App\Http\Requests\EditTask;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
 {
-    public function index(Request $request, int $id)
+    /**
+     * タスク一覧
+     * @param Folder $folder
+     * @return \Illuminate\View\View
+     */
+    public function index(Request $request, Folder $folder)
     {
-        // すべてのフォルダを取得する
-        $folders = Folder::all();
+        // ユーザーのフォルダを取得する
+        $folders = Auth::user()->folders()->get();
         
-        // 選ばれたフォルダを取得する
-        $current_folder = Folder::find($id);
-        
-        // 値がリクエストに存在しており、かつ空でないことを判定したい場合は、filledメソッドを使います。
+        // 値がリクエストに存在しており、かつ空でないことを判定したい場合
         if ($request->filled('keyword')) {
             $keyword = $request->input('keyword');
             // タイトルに合致するタスクを取得
-            $tasks = Task::where('title', 'like', '%' . $keyword . '%')->where('folder_id', $id)->paginate(10);
+            $tasks = Task::where('title', 'like', '%' . $keyword . '%')->where('folder_id', $folder->id)->paginate(10);
         } else {
             // 選ばれたフォルダに紐づくタスクを取得する
-            $tasks = $current_folder->tasks()->paginate(10);
+            $tasks = $folder->tasks()->paginate(10);
         }
         
         $date = date('Y/m/d');
         
+        $all_tasks_count = $folder->tasks()->count();
+        $task_status_1 = Task::where('status', 1)->where('folder_id', $folder->id)->count();
+        $task_status_2 = Task::where('status', 2)->where('folder_id', $folder->id)->count();
+        $task_status_3 = Task::where('status', 3)->where('folder_id', $folder->id)->count();
+        $task_status_4 = Task::where('status', 4)->where('folder_id', $folder->id)->count();
+        
         return view('tasks/index', [
                 'folders' => $folders,
-                'current_folder_id' => $current_folder->id,
+                'current_folder_id' => $folder->id,
                 'tasks' => $tasks,
                 'date' => $date,
+                'all_tasks_count' => $all_tasks_count,
+                'task_status_1' => $task_status_1,
+                'task_status_2' => $task_status_2,
+                'task_status_3' => $task_status_3,
+                'task_status_4' => $task_status_4,
             ]);
     }
     
     /**
-     * GET /folders/{id}/tasks/create
+     * タスク作成フォーム
+     * @param Folder #folder
+     * @return \Illuminate\View\View
      */
-    public function showCreateForm(int $id)
+    public function showCreateForm(Folder $folder)
     {
         return view('tasks/create', [
-            'folder_id' => $id,
+            'folder_id' => $folder->id,
             ]);
     }
     
-    public function create(int $id, CreateTask $request)
+    /**
+     * タスク作成
+     * @param Folder $folder
+     * @param CreateTask $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function create(Folder $folder, CreateTask $request)
     {
-        $current_folder = Folder::find($id);
-        
         $task = new Task();
         $task->title = $request->title;
         $task->body = $request->body;
         $task->due_date = $request->due_date;
         
-        $current_folder->tasks()->save($task);
+        $folder->tasks()->save($task);
         
         return redirect()->route('tasks.index', [
-            'id' => $current_folder->id,
+            'id' => $folder->id,
             ]);
     }
     
     /**
-     * GET /folders/{id}/tasks/{task_id}/edit
+     * タスク編集フォーム
+     * @param Folder $folder
+     * @param Tsk $task
+     * @return \Illuminate\View\View
      */
-    public function showEditForm(int $id, int $task_id)
+    public function showEditForm(Folder $folder, Task $task)
     {
-        $task = Task::find($task_id);
+        $this->checkRelation($folder, $task);
         
         return view('tasks/edit', [
             'task' => $task,
             ]);
     }
     
-    public function edit(int $id, int $task_id, EditTask $request)
+    /**
+     * タスク編集
+     * @param Folder $folder
+     * @param Task $task
+     * @param EditTask $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function edit(Folder $folder, Task $task, EditTask $request)
     {
-        // リクエストされたIDでタスクデータを取得
-        $task = Task::find($task_id);
+        $this->checkRelation($folder, $task);
         
         // 編集対象のタスクデータに入力値を詰めてsave
         $task->title = $request->title;
@@ -92,5 +121,12 @@ class TaskController extends Controller
         return redirect()->route('tasks.index', [
             'id' => $task->folder_id,
             ]);
+    }
+    
+    private function checkRelation(Folder $folder, Task $task)
+    {
+        if ($folder->id !== $task->folder_id) {
+            abort(404);
+        }
     }
 }

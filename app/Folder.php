@@ -13,4 +13,10 @@ class Folder extends Model
         // return $this->hasMany('App\Task', 'folder_id', 'id');とも書ける
         return $this->hasMany('App\Task');
     }
+    
+    public function posts()
+    {
+        
+        return $this->hasMany('App\Post');
+    }
 }

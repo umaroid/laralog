@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class RegisterController extends Controller
 {
@@ -52,7 +55,13 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+            'filename' => 'image',
+        ], [], [
+            'name' => 'ユーザー名',
+            'email' => 'メールアドレス',
+            'password' => 'パスワード',
+            'filename' => 'アバタ―画像',
+            ]);
     }
 
     /**
@@ -63,10 +72,33 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        
+        $fileName = $data['filename']->getClientOriginalName();
+        $image = Image::make($data['filename']->getRealPath());
+        $path = public_path() . '/images';
+        $image->save($path . $fileName);
+        
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'filename' => $data['filename'],
         ]);
+        
+        $fileName = $data['filename']->getClientOriginalName();
+        $image = Image::make($data['filename']->getRealPath());
+        $path = public_path(sprintf('image/%d/%s', $user->id, $fileName));
+        $dir = dirname($path);
+        mkdir($dir, 0777, true);
+        $image->save($path);
+        
+        $image_path_array = explode("/", $path);
+        $image_path = '/' . $image_path_array[6] . '/' . $image_path_array[7] . '/' . $image_path_array[8];
+        
+        $user->filename = $image_path;
+        $user->save();
+        
+        return $user;
     }
+    
 }
