@@ -25,12 +25,12 @@
                                 <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" />
                             </div>
                             <div class="form-group">
-                                <label for="name">アバタ―画像(任意)</label>
+                                <label for="name">アバタ―画像</label>
                                 <input type="file" id="filename" name="filename" />
                             </div>
                             <div class="form-group">
                                 <label for="password">パスワード</label>
-                                <input type="password" class="form-control" id="password" name="password">
+                                <input type="text" class="form-control" id="password" name="password">
                             </div>
                             <div class="form-group">
                                 <label for="password-confirm">パスワード（確認）</label>

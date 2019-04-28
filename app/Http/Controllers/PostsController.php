@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use DB;
 use App\Http\Requests\CreatePost;
+use App\Http\Requests\EditPost;
 
 class PostsController extends Controller
 {
@@ -19,8 +20,6 @@ class PostsController extends Controller
      */
     public function index(Request $request, Folder $folder)
     {
-        //$posts = Post::all();
-        
         // ユーザーのフォルダを取得する
         $folders = Auth::user()->folders()->get();
         
@@ -56,10 +55,7 @@ class PostsController extends Controller
         $post = new Post();
         $post->title = $request->title;
         $post->body = $request->body;
-        //$post->user_id = $request->id;
-        
-        //$user->post()->save($post);
-        //$user->posts()->save($post);
+
         Auth::user()->posts()->save($post);
         
         return redirect()->route('posts.index', [
@@ -76,10 +72,8 @@ class PostsController extends Controller
      */
     public function showEditForm(Folder $folder, Post $post)
     {
-        //$this->checkRelation($folder, $post);
         
         return view('posts/edit', [
-            'folder_id' => $folder->id,
             'post' => $post,
             ]);
     }
@@ -90,9 +84,8 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Folder $folder, Post $post, Request $request)
+    public function edit(Folder $folder, Post $post, EditPost $request)
     {
-        //$this->checkRelation($user, $post);
         
         // 編集対象のタスクデータに入力値を詰めてsave
         $post->title = $request->title;

@@ -17,5 +17,5 @@
             Wikiを追加する
         </a>
     </div>
-    <p style="padding-top: 3em;"><a href={{ route('tasks.index', ['id' => $current_folder_id]) }} class="btn btn-outline-primary">トップに戻る</a></p>
+    <p style="padding-top: 3em;"><a href={{ route('tasks.index', ['id' => $current_folder_id]) }} class="btn btn-outline-primary">戻る</a></p>
 @endsection

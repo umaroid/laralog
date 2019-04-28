@@ -31,16 +31,16 @@
             <nav class="panel panel-success">
                 <div class="panel-heading">メニュー</div>
                 <div class="list-group"><a href="{{ route('posts.index', ['folder' => $current_folder_id]) }}" class="list-group-item">Wiki</a></div>
-                <div class="list-group"><a href="/hello" class="list-group-item">ユーザー設定</a></div>
+                <div class="list-group"><a href="{{ route('user.edit', ['folder' => $current_folder_id]) }}" class="list-group-item">ユーザー設定</a></div>
             </nav>
         </div>
         
         <div class="col col-md-4">
             <nav class="panel panel-success">
-            <div class="panel-heading">カテゴリ</div>
+            <div class="panel-heading">フォルダ</div>
             <div class="panel-body">
                 <a href="{{ route('folders.create') }}" class="btn btn-default btn-block">
-                    カテゴリを追加する
+                    フォルダを追加する
                 </a>
             </div>
             <div class="list-group">

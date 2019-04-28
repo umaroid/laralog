@@ -55,7 +55,7 @@ class RegisterController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'filename' => 'image',
+            'filename' => ['required','image'],
         ], [], [
             'name' => 'ユーザー名',
             'email' => 'メールアドレス',
@@ -72,12 +72,7 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        
-        $fileName = $data['filename']->getClientOriginalName();
-        $image = Image::make($data['filename']->getRealPath());
-        $path = public_path() . '/images';
-        $image->save($path . $fileName);
-        
+
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],

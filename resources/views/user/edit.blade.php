@@ -14,29 +14,27 @@
                                 @endforeach
                             </div>
                         @endif
-                        <form action="{{ route('/') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('user.edit', ['folder' => $current_folder_id]) }}" method="POST" enctype="multipart/form-data">
                             @csrf
-                            <div class="form-group">
-                                <label for="email">メールアドレス</label>
-                                <input type="text" class="form-control" id="email" name="email" value="{{$user->email}}" />
-                            </div>
                             <div class="form-group">
                                 <label for="name">ユーザー名</label>
                                 <input type="text" class="form-control" id="name" name="name" value="{{$user->name}}" />
                             </div>
                             <div class="form-group">
-                                <label for="name">アバタ―画像(任意)</label>
-                                <input type="file" id="filename" name="filename" />
+                                <label for="name">アバタ―画像</label>
+                                <input type="file" id="filename" name="filename" value="{{$user->filename}}"/>
+                                <div style="text-align: center;"><img src="{{ Auth::user()->filename }}" width="35%"></div>
                             </div>
                             <div class="form-group">
                                 <label for="password">パスワード</label>
-                                <input type="password" class="form-control" id="password" name="password">
+                                <input type="text" class="form-control" id="password" name="password">
                             </div>
                             <div class="form-group">
                                 <label for="password-confirm">パスワード（確認）</label>
                                 <input type="password" class="form-control" id="password-confirm" name="password_confirmation">
                             </div>
                             <div class="text-right">
+                                <span style="padding-top: 3em;"><a href={{ route('tasks.index', ['id' => $current_folder_id]) }} class="btn btn-outline-primary">戻る</a></span>
                                 <button type="submit" class="btn btn-primary">送信</button>
                             </div>
                         </form>

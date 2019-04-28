@@ -1,7 +1,14 @@
 @extends('layout')
 
 @section('content')
-    <h1>Wiki編集ページ</h1>
+    <h1>編集</h1>
+    @if($errors->any())
+        <div class="alert alert-danger">
+            @foreach($errors->all() as $message)
+                <p>{{ $message }}</p>
+            @endforeach
+        </div>
+    @endif
     <form action="{{ route('posts.edit', ['id' => $folder_id, 'post_id' => $post->id]) }}" method="POST">
         @csrf
         <div class="form-group">

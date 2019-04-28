@@ -1,7 +1,14 @@
 @extends('layout')
 
 @section('content')
-    <h1>Wiki新規作成ページ</h1>
+    <h1>新規作成</h1>
+     @if($errors->any())
+        <div class="alert alert-danger">
+            @foreach($errors->all() as $message)
+                <p>{{ $message }}</p>
+            @endforeach
+        </div>
+    @endif
     <form action="{{ route('posts.create', ['id' => $folder_id]) }}" method="POST">
         @csrf
         <div class="form-group">

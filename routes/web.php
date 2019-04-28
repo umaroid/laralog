@@ -23,7 +23,9 @@ Route::group(['middleware' => 'auth'], function() {
         Route::post('/folders/{folder}/posts/create', 'PostsController@create');
         
     });
-    Route::get('/hello', 'UsereditController@index')->name('hello.index');
+    Route::get('/folders/{folder}/user/edit', 'UsereditController@showEditForm')->name('user.edit');
+    Route::post('/folders/{folder}/user/edit', 'UsereditController@edit'); 
+    
     Route::get('/folders/{folder}/posts/{post}/edit', 'PostsController@showEditForm')->name('posts.edit');
     Route::post('/folders/{folder}/posts/{post}/edit', 'PostsController@edit');  
 });
